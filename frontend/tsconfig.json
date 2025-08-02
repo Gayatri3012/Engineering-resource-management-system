@@ -1,0 +1,14 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.node.json" }
+  ],
+   "compilerOptions": {
+    "erasableSyntaxOnly": false,
+     "baseUrl": ".",
+        "paths": {
+          "@/*": ["./src/*"] // Adjust the path if your components are not in src
+        }
+  }
+}
