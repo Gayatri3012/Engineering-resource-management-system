@@ -1,4 +1,4 @@
-# ERMS - Engineer Resource Management System
+# ERMS - Engineering Resource Management System
 
 A full-stack web application for managing engineer resources, project assignments, and capacity planning. Built with React, Typescript, Node.js, Express, and MongoDB.
 
@@ -25,7 +25,7 @@ A full-stack web application for managing engineer resources, project assignment
 
 ### Backend
 - **Node.js** with Express.js
-- **MongoDB** with Mongoose ODM
+- **MongoDB** with Mongoose 
 - **JWT** - Authentication
 - **Bcrypt.js** - Password hashing
 - **Express Validator** - Input validation
@@ -41,7 +41,7 @@ A full-stack web application for managing engineer resources, project assignment
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/yourusername/ERMS.git
+git clone https://github.com/Gayatri3012/Engineering-resource-management-system
 cd ERMS
 ```
 
@@ -59,7 +59,7 @@ npm install
 
 Create a `.env` file in the backend directory:
 ```env
-MONGODB_URI=mongodb://localhost:27017/erms
+MONGODB_URI=mongodb+srv://yourUsername:YourPassword@cluster0.mongodb.net/erms
 JWT_SECRET=your-secret-key-here
 PORT=5000
 ```
@@ -121,34 +121,33 @@ The frontend will be available at `http://localhost:5173`
 ### Frontend Scripts
 - `npm run dev` - Start Vite development server
 - `npm run build` - Build for production
-- `npm run preview` - Preview production build
-- `npm run lint` - Run ESLint
+
 
 ## 🔑 API Endpoints
 
 ### Authentication
-- `POST /api/auth/register` - Register new user
 - `POST /api/auth/login` - User login
+- `GET /api/auth/profile` - Get user profile
+- `PUT /api/auth/profile` - Update engineer profile
 
 ### Engineers
 - `GET /api/engineers` - Get all engineers
-- `GET /api/engineers/:id` - Get engineer by ID
-- `PUT /api/engineers/:id` - Update engineer profile
+- `GET /api/engineers/:id/capacity` - Get engineer's available capacity
+
 
 ### Projects
 - `GET /api/projects` - Get all projects
 - `GET /api/projects/:id` - Get project by ID
 - `POST /api/projects` - Create new project (managers only)
 - `PUT /api/projects/:id` - Update project
-- `DELETE /api/projects/:id` - Delete project
+
 
 ### Assignments
 - `GET /api/assignments` - Get all assignments
-- `GET /api/assignments/engineer/:id` - Get assignments by engineer
-- `GET /api/assignments/project/:id` - Get assignments by project
 - `POST /api/assignments` - Create new assignment
 - `PUT /api/assignments/:id` - Update assignment
 - `DELETE /api/assignments/:id` - Delete assignment
+
 
 ## 🏗️ Project Structure
 
@@ -163,6 +162,11 @@ ERMS/
 │   │   ├── User.js          # User/Engineer model
 │   │   ├── Project.js       # Project model
 │   │   └── Assignment.js    # Assignment model
+│   ├── controllers/
+│   │   ├── authController.js          # Auth Controller
+│   │   ├── engineersController.js     # Engineer Controller
+│   │   ├── projectsController.js      # Project Controller
+│   │   └── assignmentsController.js   # Assignment Controller
 │   ├── routes/
 │   │   ├── auth.js          # Authentication routes
 │   │   ├── engineers.js     # Engineer routes
@@ -195,7 +199,7 @@ The application uses JWT-based authentication. Tokens are stored in localStorage
 
 ### User Roles
 - **Manager**: Can create projects, view all engineers, create assignments
-- **Engineer**: Can view own profile, assigned projects, and update skills
+- **Engineer**: Can view own profile, assigned projects, and update profile
 
 ## 🌐 Deployment
 
@@ -218,6 +222,42 @@ const api = axios.create({
   // ...
 });
 ```
+
+## 🤖 AI Tools Used
+
+This project was developed with assistance from the following AI tools:
+- **Claude** - Code implementation, architecture decisions, and debugging
+- **ChatGPT** - Code review, optimization suggestions, and best practices
+- **GitHub Copilot** - Code completion and inline suggestions
+
+## 🧠 AI-Assisted Development
+
+### Which AI tools were used and how
+- **Claude**: Primary development assistant for implementing features, solving complex problems, and architectural decisions
+- **ChatGPT**: Used for code reviews, performance optimization
+- **GitHub Copilot**: Real-time code suggestions and boilerplate code generation
+
+### Specific examples of how AI accelerated development
+- **React Component Architecture**: AI suggested component composition patterns that improved code reusability
+- **API Route Implementation**: AI accelerated REST API development by generating consistent route handlers
+- **Error Handling**: AI provided comprehensive error handling patterns across the application
+- **Form Validation**: AI helped implement robust validation using Zod schemas
+
+### Any challenges faced with AI-generated code and how they were resolved
+- **Context Limitations**: Some AI suggestions lacked full context of the codebase. Resolution: Provided more specific prompts with relevant code snippets
+- **Outdated Patterns**: Occasionally received suggestions using deprecated methods. Resolution: Specified version requirements and modern patterns
+- **Over-engineering**: AI sometimes suggested overly complex solutions. Resolution: Requested simpler, more maintainable alternatives
+- **Type Safety**: Initial AI suggestions sometimes had TypeScript issues. Resolution: Explicitly requested type-safe implementations
+- **Free-tier limitations**: I did not have access to any Pro or paid AI plans. This sometimes restricted longer interactions, cut off code blocks mid-response, or caused latency
+
+### Approach to validating and understanding AI suggestions
+
+### Validation Process
+1. **Code Review**: All AI-generated code was manually reviewed for logic, security, and maintainability
+2. **Testing**: Implemented features were tested with various edge cases and scenarios
+3. **Performance**: Monitored application performance to ensure AI suggestions didn't introduce bottlenecks
+4. **Documentation**: Ensured all AI-assisted code was properly documented for future maintenance
+
 
 ## 🤝 Contributing
 

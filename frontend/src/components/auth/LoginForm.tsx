@@ -165,19 +165,6 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
             )}
           </button>
         </form>
-
-        <div className="mt-4 text-center">
-          <button
-            type="button"
-            className="text-sm text-blue-600 hover:text-blue-500"
-            onClick={() => {
-              // Add forgot password functionality here
-              console.log('Forgot password clicked');
-            }}
-          >
-            Forgot your password?
-          </button>
-        </div>
       </div>
     </div>
   );
