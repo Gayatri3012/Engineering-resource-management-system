@@ -59,7 +59,7 @@ npm install
 
 Create a `.env` file in the backend directory:
 ```env
-MONGODB_URI=mongodb+srv://yourUsername:YourPassword@cluster0.mongodb.net/erms
+MONGODB_URI=your-mongodb-uri
 JWT_SECRET=your-secret-key-here
 PORT=5000
 ```
