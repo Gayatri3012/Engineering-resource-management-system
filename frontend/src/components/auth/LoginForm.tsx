@@ -46,7 +46,6 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
   }, [watchedFields.email, watchedFields.password]);
 
   const onSubmit = handleSubmit(async (data: LoginFormData) => {
-    console.log('Form submitted with data:', data);
     
     try {
       setIsLoading(true);

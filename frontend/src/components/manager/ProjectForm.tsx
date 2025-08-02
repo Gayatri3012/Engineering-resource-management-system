@@ -165,13 +165,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ isOpen, onClose, onSuccess, p
     try {
       setIsLoading(true);
       setError(null);
-      
-      // Debug logs
-      console.log('Form data before submission:', data);
-      console.log('Selected skills:', selectedSkills);
-      console.log('User:', user);
-      console.log('All form errors:', errors);
-
+    
       const projectData = {
         ...data,
         requiredSkills: selectedSkills,
@@ -179,10 +173,8 @@ const ProjectForm: React.FC<ProjectFormProps> = ({ isOpen, onClose, onSuccess, p
         managerId: user?._id || '',
       };
       
-      console.log('Final project data:', projectData);
 
       if (isEditing && project?._id) {
-        console.log('Updating project with ID:', project._id);
         await editProject(project._id, projectData);
       } else {
         console.log('Creating new project');

@@ -15,13 +15,13 @@ const assignmentSchema = z.object({
   allocationPercentage: z.number()
     .min(1, 'Allocation must be at least 1%')
     .max(100, 'Allocation cannot exceed 100%'),
-  startDate: z.string().min(1, 'Start date is required'),
-  endDate: z.string().min(1, 'End date is required'),
-  role: z.string().min(1, 'Role is required'),
-}).refine((data) => new Date(data.endDate) > new Date(data.startDate), {
-  message: "End date must be after start date",
-  path: ["endDate"],
-});
+      startDate: z.string().min(1, 'Start date is required'),
+      endDate: z.string().min(1, 'End date is required'),
+      role: z.string().min(1, 'Role is required'),
+    }).refine((data) => new Date(data.endDate) > new Date(data.startDate), {
+      message: "End date must be after start date",
+      path: ["endDate"],
+    });
 
 interface AssignmentFormProps {
   isOpen: boolean;
