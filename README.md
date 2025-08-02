@@ -1,6 +1,6 @@
 # ERMS - Engineer Resource Management System
 
-A full-stack web application for managing engineer resources, project assignments, and capacity planning. Built with React, Node.js, Express, and MongoDB.
+A full-stack web application for managing engineer resources, project assignments, and capacity planning. Built with React, Typescript, Node.js, Express, and MongoDB.
 
 ## 🚀 Features
 
@@ -14,7 +14,7 @@ A full-stack web application for managing engineer resources, project assignment
 ## 🛠️ Tech Stack
 
 ### Frontend
-- **React 19** with TypeScript
+- **React** with TypeScript
 - **Vite** - Build tool and dev server
 - **Tailwind CSS** - Styling
 - **Shadcn/ui** - UI component library
@@ -100,7 +100,7 @@ This will create:
 ### Start the Backend Server
 From the backend directory:
 ```bash
-npm run dev
+npm start
 ```
 The backend server will start on `http://localhost:5000`
 
