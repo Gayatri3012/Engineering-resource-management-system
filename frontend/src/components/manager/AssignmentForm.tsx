@@ -43,7 +43,7 @@ const AssignmentForm: React.FC<AssignmentFormProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [selectedEngineer, setSelectedEngineer] = useState<string>('');
   const [capacityWarning, setCapacityWarning] = useState<string | null>(null);
-
+  const [engineer, setEngineer] = useState<any>(null);
   const isEditing = !!assignment;
 
   const {
@@ -122,12 +122,14 @@ const AssignmentForm: React.FC<AssignmentFormProps> = ({
   useEffect(() => {
     if (watchedEngineerId) {
       setSelectedEngineer(watchedEngineerId);
+      console.log(watchedEngineerId);
       checkCapacity(watchedEngineerId, watchedAllocation || 0);
     }
   }, [watchedEngineerId, watchedAllocation]);
 
   const checkCapacity = (engineerId: string, allocation: number) => {
     const engineer = state.engineers.find(e => e._id === engineerId);
+    setEngineer(engineer);
     if (!engineer) return;
 
     // Filter out current assignment when editing to avoid counting it twice
@@ -153,6 +155,7 @@ const AssignmentForm: React.FC<AssignmentFormProps> = ({
       setCapacityWarning(
         `This assignment would overload ${engineer.name}. Current: ${totalAllocated}%, New total: ${newTotal}%, Max capacity: ${engineer.maxCapacity}%`
       );
+      return;
     } else if (allocation > available) {
       setCapacityWarning(
         `${engineer.name} only has ${available}% capacity available. Current allocation: ${totalAllocated}%`
@@ -164,6 +167,7 @@ const AssignmentForm: React.FC<AssignmentFormProps> = ({
 
   const getEngineerCapacityInfo = (engineerId: string) => {
     const engineer = state.engineers.find(e => e._id === engineerId);
+    console.log(engineer)
     if (!engineer) return null;
 
     // Filter out current assignment when editing
@@ -181,11 +185,15 @@ const AssignmentForm: React.FC<AssignmentFormProps> = ({
     const totalAllocated = currentAssignments.reduce(
       (sum, assignmentItem) => sum + assignmentItem.allocationPercentage, 0
     );
+    let available;
+    if(totalAllocated > engineer.maxCapacity){
+      available = 0;
+    }
 
     return {
       engineer,
       totalAllocated,
-      available: engineer.maxCapacity - totalAllocated
+      available: available
     };
   };
 
@@ -323,7 +331,7 @@ const AssignmentForm: React.FC<AssignmentFormProps> = ({
                 </div>
                 <div>
                   <span className="text-gray-500">Available:</span>
-                  <div className="font-medium text-green-600">{selectedEngineerInfo.available}%</div>
+                  <div className="font-medium text-green-600">{selectedEngineerInfo.available ? (selectedEngineerInfo.available > selectedEngineerInfo.engineer.maxCapacity ? '0' : selectedEngineerInfo.available) : '0'}%</div>
                 </div>
                 <div>
                   <span className="text-gray-500">Max Capacity:</span>
@@ -419,7 +427,7 @@ const AssignmentForm: React.FC<AssignmentFormProps> = ({
             <Button
             onClick={undefined}
               type="submit"
-              disabled={isLoading}
+              disabled={isLoading || (selectedEngineerInfo?.available ? selectedEngineerInfo.available > engineer.maxCapacity : false)}
               className="bg-blue-600 hover:bg-blue-700"
             >
               {isLoading ? (

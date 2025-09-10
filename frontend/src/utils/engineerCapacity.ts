@@ -65,7 +65,7 @@ export function calculateEngineerCapacity(
   const availableCapacity = Math.max(0, engineer.maxCapacity - totalAllocated);
   const utilizationPercentage = engineer.maxCapacity > 0 ? (totalAllocated / engineer.maxCapacity) * 100 : 0;
   const maxCapacity = engineer.maxCapacity;
-  
+
   return {
     ...engineer,
     capacityInfo: {

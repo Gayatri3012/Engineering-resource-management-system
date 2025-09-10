@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useAuth } from '../../context/AuthContext';
 import type { LoginFormData } from '../../types';
+import { Eye, EyeOff } from 'lucide-react';
 
 // Validation schema
 const loginSchema = z.object({
@@ -19,6 +20,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
   const { login } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
 
   const {
     register,
@@ -45,6 +47,10 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
     }
   }, [watchedFields.email, watchedFields.password]);
 
+   const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
   const onSubmit = handleSubmit(async (data: LoginFormData) => {
     
     try {
@@ -65,7 +71,6 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
       
       // Set the error message
       const errorMessage = err.message || 'Login failed';
-      setError(errorMessage);
       
       // Optionally set field-specific errors
       if (errorMessage.toLowerCase().includes('email')) {
@@ -78,6 +83,9 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
           type: 'manual', 
           message: 'Invalid password' 
         });
+      } else {
+        // Only set general error for non-field-specific errors
+        setError(errorMessage);
       }
     } finally {
       setIsLoading(false);
@@ -85,7 +93,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
   });
 
   return (
-    <div className="w-full max-w-md mx-auto">
+  <div className="w-full max-w-md mx-auto">
       <div className="bg-white shadow-md rounded-lg px-8 pt-6 pb-8 mb-4">
         <div className="mb-6 text-center">
           <h2 className="text-2xl font-bold text-gray-900">Sign In</h2>
@@ -132,18 +140,31 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
             <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
               Password
             </label>
-            <input
-              {...register('password')}
-              type="password"
-              id="password"
-              autoComplete="current-password"
-              className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 ${
-                errors.password 
-                  ? 'border-red-300 focus:ring-red-500 focus:border-red-500' 
-                  : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'
-              }`}
-              placeholder="Enter your password"
-            />
+            <div className="relative">
+              <input
+                {...register('password')}
+                type={showPassword ? 'text' : 'password'}
+                id="password"
+                autoComplete="current-password"
+                className={`w-full px-3 py-2 pr-10 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+                  errors.password 
+                    ? 'border-red-300 focus:ring-red-500 focus:border-red-500' 
+                    : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'
+                }`}
+                placeholder="Enter your password"
+              />
+              <button
+                type="button"
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                onClick={togglePasswordVisibility}
+              >
+                {showPassword ? (
+                  <EyeOff size={20} />
+                ) : (
+                  <Eye size={20} />
+                )}
+              </button>
+            </div>
             {errors.password && (
               <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
             )}

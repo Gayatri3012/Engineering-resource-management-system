@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
-// import type { Engineer } from '../types';
 import CapacityBar from '../ui/CapacityBar';
 import { Search, Filter, User } from 'lucide-react';
 import { calculateEngineerCapacity } from '@/utils/engineerCapacity';
@@ -20,7 +19,7 @@ import {
 
 interface TeamOverviewProps {
   onCreateAssignment?: (engineerId: string) => void;
-  embedded?: boolean; // New prop to control the view
+  embedded?: boolean; //  prop to control the view
   maxRows?: number; // New prop to limit rows when embedded
 }
 
@@ -65,7 +64,7 @@ const TeamOverview: React.FC<TeamOverviewProps> = ({
     
     const matchesCapacity = !capacityFilter || 
       (capacityFilter === 'available' && engineer.availableCapacity > 0) ||
-      (capacityFilter === 'overloaded' && engineer.totalAllocated > engineer.maxCapacity) ||
+      (capacityFilter === 'overloaded' && engineer.capacityInfo.utilizationPercentage === 100) ||
       (capacityFilter === 'full' && engineer.availableCapacity === 0);
 
     return matchesSearch && matchesSkill && matchesSeniority && matchesCapacity;
@@ -91,14 +90,6 @@ const getCapacityStatus = (allocated: number, max: number) => {
     return 'success';
   };
 
-  if (state.loading) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-        <span className="ml-2 text-gray-600">Loading team data...</span>
-      </div>
-    );
-  }
 
   const getAvailabilityInfo = (engineer: any) => {
     const currentCapacity = engineer.availableCapacity;
@@ -314,9 +305,9 @@ const getCapacityStatus = (allocated: number, max: number) => {
                 <User className="h-6 w-6 text-yellow-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">At Capacity</p>
+                <p className="text-sm font-medium text-gray-600">High</p>
                 <p className="text-2xl font-bold text-gray-900">
-                  {engineersWithCapacity.filter(e => e.availableCapacity === 0 && e.totalAllocated <= e.maxCapacity).length}
+                  {engineersWithCapacity.filter(e => e.capacityInfo.utilizationPercentage >= 80 && e.capacityInfo.utilizationPercentage < 100).length}
                 </p>
               </div>
             </div>
@@ -330,7 +321,7 @@ const getCapacityStatus = (allocated: number, max: number) => {
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Overloaded</p>
                 <p className="text-2xl font-bold text-gray-900">
-                  {engineersWithCapacity.filter(e => e.totalAllocated > e.maxCapacity).length}
+                  {engineersWithCapacity.filter(e => e.capacityInfo.utilizationPercentage === 100).length}
                 </p>
               </div>
             </div>

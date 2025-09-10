@@ -36,6 +36,7 @@ import {
 
 import { calculateEngineersCapacity, getCapacitySummary } from '@/utils/engineerCapacity';
 
+
 const Dashboard: React.FC = () => {
   const { user } = useAuth();
   const { state, fetchEngineers, fetchProjects, fetchAssignments } = useApp();
@@ -84,51 +85,65 @@ const Dashboard: React.FC = () => {
     const engineersWithCapacity = calculateEngineersCapacity(engineers, assignments);
     
     const alerts: User[] = engineersWithCapacity
-      .filter(engineer => 
-        engineer.capacityInfo.totalAllocated > engineer.maxCapacity || 
-        engineer.capacityInfo.totalAllocated < 30
-      )
+       .filter(engineer => {
+      const utilization = engineer.capacityInfo.utilizationPercentage;
+      return utilization === 100 || utilization < 30;
+    })
       .map(engineer => ({
         ...engineer,
-        currentUtilization: engineer.capacityInfo.totalAllocated
+        currentUtilization: engineer.capacityInfo.utilizationPercentage
       } as User & { currentUtilization: number }));
     
     setCapacityAlerts(alerts);
   };
+  type StatusKey = 'underutilized' | 'optimal' | 'high' | 'overloaded';
+    // Thresholds & color map
+  const thresholds: Record<StatusKey, { min: number; max: number; color: string; label: string }> = {
+    underutilized: { min: 0, max: 30, color: '#fde047', label: 'Under-utilized' }, // <30%
+    optimal: { min: 30, max: 80, color: '#22c55e', label: 'Optimal' },             // 30–<80%
+    high: { min: 80, max: 100, color: '#fb923c', label: 'High' },                  // 80–<100%
+    overloaded: { min: 100, max: 100, color: '#dc2626', label: 'Overloaded' }      // exactly 100%
+  };
 
   const prepareChartData = () => {
     const engineersWithCapacity = calculateEngineersCapacity(engineers, assignments);
-    
-    // Utilization distribution data for pie chart
-    const utilizationRanges = [
-      { name: 'Under-utilized', count: 0, fill: '#ef4444' },
-      { name: 'Optimal', count: 0, fill: '#22c55e' },
-      { name: 'High', count: 0, fill: '#f59e0b' },
-      { name: 'Overloaded', count: 0, fill: '#dc2626' }
-    ];
+
+    // Utilization distribution for pie chart
+    const utilizationRanges = Object.values(thresholds).map(({ label, color }) => ({
+      name: label,
+      count: 0,
+      fill: color
+    }));
 
     engineersWithCapacity.forEach(engineer => {
-      const utilization = engineer.capacityInfo.totalAllocated;
-      if (utilization < 30) utilizationRanges[0].count++;
-      else if (utilization <= 80) utilizationRanges[1].count++;
-      else if (utilization <= 100) utilizationRanges[2].count++;
-      else utilizationRanges[3].count++;
+      const { totalAllocated, maxCapacity } = engineer.capacityInfo;
+      const utilization = maxCapacity > 0 ? (totalAllocated / maxCapacity) * 100 : 0;
+
+      if (utilization < thresholds.underutilized.max) utilizationRanges[0].count++;
+      else if (utilization < thresholds.optimal.max) utilizationRanges[1].count++;
+      else if (utilization < thresholds.high.max) utilizationRanges[2].count++;
+      else if (utilization === thresholds.overloaded.max) utilizationRanges[3].count++;
     });
 
     setUtilizationData(utilizationRanges.filter(range => range.count > 0));
 
     // Individual engineer utilization for bar chart
     const chartData = engineersWithCapacity.map(engineer => {
-      const status = engineer.capacityInfo.totalAllocated > engineer.maxCapacity ? 'overloaded' : 
-                    engineer.capacityInfo.totalAllocated < 30 ? 'underutilized' : 'optimal';
-      
-      return {
-        name: engineer.name.split(' ')[0],
-        utilization: Math.round(engineer.capacityInfo.totalAllocated),
+      let utilization = engineer.maxCapacity > 0 
+      ? (engineer.capacityInfo.totalAllocated / engineer.maxCapacity) * 100 
+      : 0;
+
+    let status: StatusKey = 'underutilized';
+    if (utilization < thresholds.underutilized.max) status = 'underutilized';
+    else if (utilization < thresholds.optimal.max) status = 'optimal';
+    else if (utilization < thresholds.high.max) status = 'high';
+    else if (utilization === thresholds.overloaded.max) status = 'overloaded';
+    return {
+      name: engineer.name.split(' ')[0],
+      utilization: Math.round(utilization),
         maxCapacity: engineer.maxCapacity,
         status,
-        fill: status === 'overloaded' ? '#dc2626' : 
-              status === 'underutilized' ? '#ef4444' : '#22c55e'
+        fill: thresholds[status].color
       };
     });
 
@@ -140,19 +155,16 @@ const Dashboard: React.FC = () => {
   // Custom tooltip for bar chart
   const CustomBarTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
-      const data = payload[0].payload;
+       const data = payload[0].payload as { status: StatusKey; utilization: number; maxCapacity: number };
+         const statusInfo = thresholds[data.status] || { color: '#6b7280', label: 'Unknown' };
       return (
         <div className="bg-white p-3 border rounded shadow-lg border-gray-200">
           <p className="font-medium text-gray-900">{`${label}`}</p>
           <p className="text-blue-600">{`Utilization: ${data.utilization}%`}</p>
           <p className="text-gray-600">{`Max Capacity: ${data.maxCapacity}%`}</p>
-          <p className={`font-medium ${
-            data.status === 'overloaded' ? 'text-red-600' : 
-            data.status === 'underutilized' ? 'text-yellow-600' : 'text-green-600'
-          }`}>
-            {data.status === 'overloaded' ? 'Overloaded' :
-             data.status === 'underutilized' ? 'Under-utilized' : 'Optimal'}
-          </p>
+            <p className="font-medium" style={{ color: statusInfo.color }}>
+          {statusInfo.label}
+        </p>
         </div>
       );
     }
@@ -299,7 +311,7 @@ const Dashboard: React.FC = () => {
                       <div key={engineer._id} className="flex justify-between items-center">
                         <span className="text-red-800">{engineer.name}</span>
                         <span className="text-sm text-red-600">
-                          {(engineer as any).currentUtilization > engineer.maxCapacity! 
+                          {(engineer as any).currentUtilization === engineer.maxCapacity! 
                             ? `Overloaded: ${(engineer as any).currentUtilization}%`
                             : `Underutilized: ${(engineer as any).currentUtilization}%`
                           }
@@ -384,16 +396,8 @@ const Dashboard: React.FC = () => {
             </div>
 
             {/* Quick Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Card>
-                <CardContent className="p-4">
-                  <h4 className="font-medium text-gray-700">Optimal Utilization</h4>
-                  <p className="text-2xl font-bold text-green-600">
-                    {utilizationData.find(d => d.name === 'Optimal')?.count || 0}
-                  </p>
-                  <p className="text-sm text-gray-500">Engineers (30-80%)</p>
-                </CardContent>
-              </Card>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+             
               <Card>
                 <CardContent className="p-4">
                   <h4 className="font-medium text-gray-700">Under-utilized</h4>
@@ -403,15 +407,34 @@ const Dashboard: React.FC = () => {
                   <p className="text-sm text-gray-500">Engineers (&lt;30%)</p>
                 </CardContent>
               </Card>
+               <Card>
+                <CardContent className="p-4">
+                  <h4 className="font-medium text-gray-700">Optimal Utilization</h4>
+                  <p className="text-2xl font-bold text-green-600">
+                    {utilizationData.find(d => d.name === 'Optimal')?.count || 0}
+                  </p>
+                  <p className="text-sm text-gray-500">Engineers (30-80%)</p>
+                </CardContent>
+              </Card>
+               <Card>
+                <CardContent className="p-4">
+                  <h4 className="font-medium text-gray-700">High</h4>
+                  <p className="text-2xl font-bold text-orange-600">
+                    {utilizationData.find(d => d.name === 'High')?.count || 0}
+                  </p>
+                  <p className="text-sm text-gray-500">Engineers (80-100%)</p>
+                </CardContent>
+              </Card>
               <Card>
                 <CardContent className="p-4">
                   <h4 className="font-medium text-gray-700">Overloaded</h4>
                   <p className="text-2xl font-bold text-red-600">
                     {utilizationData.find(d => d.name === 'Overloaded')?.count || 0}
                   </p>
-                  <p className="text-sm text-gray-500">Engineers (&gt;100%)</p>
+                  <p className="text-sm text-gray-500">Engineers (100%)</p>
                 </CardContent>
               </Card>
+              
             </div>
           </div>
         )}

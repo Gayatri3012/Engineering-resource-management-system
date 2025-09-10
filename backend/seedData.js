@@ -57,7 +57,7 @@ const engineers = await User.insertMany([
         role: 'engineer',
         skills: ['Java', 'Spring', 'MySQL'],
         seniority: 'junior',
-        maxCapacity: 80,
+        maxCapacity: 50,
         department: 'Mobile'
     },
     {
@@ -67,7 +67,7 @@ const engineers = await User.insertMany([
         role: 'engineer',
         skills: ['JavaScript', 'Angular', 'MongoDB'],
         seniority: 'mid',
-        maxCapacity: 90,
+        maxCapacity: 50,
         department: 'Full Stack'
     },
     {

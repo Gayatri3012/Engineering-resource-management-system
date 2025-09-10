@@ -8,10 +8,11 @@ import {
   Search,
   Filter,
   Edit,
-  Users,
   Calendar,
   CheckCircle,
+  ClipboardList,
   Clock,
+  FolderOpen,
 } from 'lucide-react';
 import { 
   Button,
@@ -122,9 +123,9 @@ const Projects: React.FC = () => {
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'active':
-        return <CheckCircle className="h-4 w-4 text-green-600" />;
+        return <Clock className="h-4 w-4 text-green-600" />;
       case 'planning':
-        return <Clock className="h-4 w-4 text-yellow-600" />;
+        return <ClipboardList className="h-4 w-4 text-yellow-600" />;
       case 'completed':
         return <CheckCircle className="h-4 w-4 text-blue-600" />;
       default:
@@ -181,7 +182,7 @@ const Projects: React.FC = () => {
           <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
             <div className="flex items-center">
               <div className="p-2 bg-blue-100 rounded-lg">
-                <CheckCircle className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
+                <FolderOpen className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
               </div>
               <div className="ml-3 sm:ml-4">
                 <p className="text-xs sm:text-sm font-medium text-gray-600">Total Projects</p>
@@ -193,7 +194,7 @@ const Projects: React.FC = () => {
           <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
             <div className="flex items-center">
               <div className="p-2 bg-green-100 rounded-lg">
-                <CheckCircle className="h-5 w-5 sm:h-6 sm:w-6 text-green-600" />
+                <Clock className="h-5 w-5 sm:h-6 sm:w-6 text-green-600" />
               </div>
               <div className="ml-3 sm:ml-4">
                 <p className="text-xs sm:text-sm font-medium text-gray-600">Active Projects</p>
@@ -207,7 +208,7 @@ const Projects: React.FC = () => {
           <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
             <div className="flex items-center">
               <div className="p-2 bg-yellow-100 rounded-lg">
-                <Clock className="h-5 w-5 sm:h-6 sm:w-6 text-yellow-600" />
+                <ClipboardList className="h-5 w-5 sm:h-6 sm:w-6 text-yellow-600" />
               </div>
               <div className="ml-3 sm:ml-4">
                 <p className="text-xs sm:text-sm font-medium text-gray-600">In Planning</p>
@@ -221,7 +222,7 @@ const Projects: React.FC = () => {
           <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
             <div className="flex items-center">
               <div className="p-2 bg-purple-100 rounded-lg">
-                <Users className="h-5 w-5 sm:h-6 sm:w-6 text-purple-600" />
+                <CheckCircle className="h-5 w-5 sm:h-6 sm:w-6 text-purple-600" />
               </div>
               <div className="ml-3 sm:ml-4">
                 <p className="text-xs sm:text-sm font-medium text-gray-600">Completed</p>

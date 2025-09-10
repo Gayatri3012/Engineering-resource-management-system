@@ -160,7 +160,7 @@ const editProject = async (req, res) => {
   }
 }
 
-module.exports = {
+module.exports = { 
     getAllProjects,
     createProject,
     getProjectById,

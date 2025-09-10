@@ -1,4 +1,4 @@
-// Create frontend/src/pages/LoginPage.tsx:
+
 import React from 'react';
 import {  useNavigate } from 'react-router-dom';
 import LoginForm from '@/components/auth/LoginForm';
@@ -8,8 +8,8 @@ const LoginPage: React.FC = () => {
   const navigate = useNavigate();
 
   const handleLoginSuccess = (userRole: string) => {
-     console.log('Login successful for role:', userRole); // <-- add this
-  if (!userRole) return;
+    console.log('Login successful for role:', userRole); 
+    if (!userRole) return;
     const redirectPath = userRole === 'manager' ? '/manager' : '/engineer';
     navigate(redirectPath, { replace: true });
   };

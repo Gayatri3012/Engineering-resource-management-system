@@ -22,7 +22,7 @@ const login = async (req, res) => {
         if (!user) {
             return res.status(401).json({
                 success: false,
-                message: 'Invalid credentials'
+                message: 'Invalid email'
             });
         }
 
@@ -32,13 +32,13 @@ const login = async (req, res) => {
         if (!isMatch) {
             return res.status(401).json({
                 success: false,
-                message: 'Invalid credentials'
+                message: 'Invalid password'
             });
         }
 
         // Generate JWT token
         const token = jwt.sign(
-            { id: user._id },
+            { id: user._id, role: user.role },
             process.env.JWT_SECRET,
             { expiresIn: '1d' }
         );
@@ -56,8 +56,7 @@ const login = async (req, res) => {
     } catch (error) {
         res.status(500).json({
             success: false,
-            message: 'Login failed',
-            error: error.message
+            message: 'Server error during login',
         });
     }
 };

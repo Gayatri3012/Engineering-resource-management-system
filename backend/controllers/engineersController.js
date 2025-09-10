@@ -123,9 +123,13 @@ const getEngineerCapacity = async (req, res, next) => {
     );
 
     const available = Math.max(0, engineer.maxCapacity - totalAllocated);
-    res.json({ availableCapacity: available });
+    res.json({       
+        maxCapacity: engineer.maxCapacity,
+        totalAllocated: totalAllocated,
+        availableCapacity: available 
+    });
   } catch (err) {
-    console.error('Capacity error:', err); // 👈 Add this
+    console.error('Capacity error:', err); 
     res.status(500).json({ message: 'Internal server error' });
   }
 };

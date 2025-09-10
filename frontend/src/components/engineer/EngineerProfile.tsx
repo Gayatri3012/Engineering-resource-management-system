@@ -12,7 +12,7 @@ interface ProfileFormData {
 }
 
 const EngineerProfile: React.FC = () => {
-  const { user, updateUserProfile } = useAuth(); // Assuming updateUserProfile exists in AuthContext
+  const { user, updateUserProfile } = useAuth();
   const { fetchAssignments, fetchProjects } = useApp();
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [isLoading, setIsLoading] = useState(false);

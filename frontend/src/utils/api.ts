@@ -2,7 +2,8 @@ import axios from 'axios';
 
 // Create axios instance with base URL
 const api = axios.create({
-  baseURL: `${import.meta.env.VITE_API_URL}/api`,
+  baseURL: `https://engineering-resource-management-system-h90n.onrender.com/api`,
+  // baseURL: `http://localhost:5000/api`,
   headers: {
     'Content-Type': 'application/json',
   },
